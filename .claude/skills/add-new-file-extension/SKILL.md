@@ -7,6 +7,8 @@ description: Use this skill when the user wants to add Quick Look text-preview s
 
 The user provides a path to a sample file (or a path is implicit from prior context). Run this sequence in order.
 
+If a step's outcome is unexpected — the file's UTI looks weird, no provider claims any of the UTIs you'd expect, or `qlmanage` hangs — refer to [`docs/quicklook-investigation.md`](../../../docs/quicklook-investigation.md) for the underlying architectural model and a more thorough diagnostic cheat sheet (commands like `qlmanage -m plugins`, `pluginkit -mAvvv`, and `qlmanage -p -c <UTI>` for hypothesis-testing what would happen if Launch Services classified the file differently).
+
 ## 1. Pre-flight
 
 Confirm the working directory contains `EasyPlaintextQuicklookExtension.xcodeproj/`. The extension must already be installed (run `/install` first if not).

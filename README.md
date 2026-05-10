@@ -9,9 +9,13 @@ A small macOS Quick Look Preview Extension that fills in Finder-spacebar text pr
 
 ## Why this exists
 
-By default, macOS does not preview YAML or TOML files in Finder. Pressing spacebar on a `.yaml` or `.toml` file shows a generic-document icon instead of the file's text contents. JSON, XML, and Markdown work because Apple's built-in Quick Look text generator (`/System/Library/QuickLook/Text.qlgenerator`) is bound by exact name to a fixed list of UTIs that includes `public.json` and `public.xml` but not `public.yaml` or `public.toml`. Even though `public.yaml` and `public.toml` are declared by macOS as conforming to `public.text`, the system generator's binding is by-name rather than by-conformance, so it silently skips them.
+By default, macOS does not preview YAML or TOML files in Finder. Pressing spacebar on a `.yaml` or `.toml` file shows a generic-document icon instead of the file's text contents.
 
-This extension fills the gap. It binds to `public.yaml` and `public.toml` (and any other UTIs you add), reads the file's bytes, and hands them back to macOS's plain-text renderer. The result is identical to how `.json` and `.xml` already preview — same font, same window chrome, same scroll behaviour — because the same renderer is doing the work. There is no syntax highlighting, no third-party library, no auto-update mechanism, and roughly ten lines of Swift in a sandboxed Quick Look Preview Extension target.
+When `quicklookd` (the system service that drives Quick Look) is asked to preview a file, it walks the file's UTI conformance tree leaf-first and picks the first installed provider that claims any UTI in that tree. For a `.yaml` file the tree is roughly `public.yaml → public.text → public.data → public.item`. Apple's built-in providers — the legacy `/System/Library/QuickLook/Text.qlgenerator` and the modern `QLPreviewGenerationExtension.appex` shipped with QuickLookUI — both claim `public.plain-text` along with a handful of specific subtypes (`public.json`, `public.xml`, `public.rtf`, etc.) but **not** `public.text`. And `public.yaml` is declared by macOS as conforming to `public.text` directly, not via `public.plain-text`, so the tree walk from `public.yaml` never reaches a UTI that any installed provider claims. The result is the generic-document icon. The same logic explains TOML and several other plain-text formats Apple knows about as a UTI but does not preview.
+
+This extension fills the gap. It claims `public.yaml` and `public.toml` directly (and any other UTIs you add), reads the file's bytes, and hands them back to macOS labelled as `UTType.plainText`, which the system's plain-text renderer handles. The result is identical to how `.json` and `.xml` already preview — same font, same window chrome, same scroll behaviour — because the same underlying renderer is doing the work once we route the file to it. There is no syntax highlighting, no third-party library, no auto-update mechanism, and roughly ten lines of Swift in a sandboxed Quick Look Preview Extension target.
+
+For a deeper architectural walk-through of how Quick Look resolves previews — including the diagnostic procedure for any "why doesn't this file preview?" situation, not just YAML and TOML — see [`docs/quicklook-investigation.md`](docs/quicklook-investigation.md).
 
 ## Installation
 
@@ -134,6 +138,7 @@ A free Apple ID's Personal Team works for local installation, but its developmen
 │   └── Info.plist                               where QLSupportedContentTypes lives
 ├── examples/                                    sample files for manual testing
 ├── images/                                      before/after screenshots used by this README
+├── docs/                                        architectural deep-dive on macOS Quick Look
 ├── .claude/skills/                              install / clean-install / add-new-file-extension / uninstall
 ├── README.md                                    this file
 ├── LICENSE                                      MIT
