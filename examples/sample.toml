@@ -1,0 +1,23 @@
+# A sample TOML file for testing Quick Look preview support.
+# https://toml.io/en/
+
+title = "Quick Look Test"
+
+[owner]
+name = "Demo User"
+created = 2026-05-09T10:00:00Z
+
+[database]
+enabled = true
+ports = [8000, 8001, 8002]
+data = [["delta", "phi"], [3.14]]
+
+[servers]
+
+  [servers.alpha]
+  ip = "10.0.0.1"
+  role = "frontend"
+
+  [servers.beta]
+  ip = "10.0.0.2"
+  role = "backend"
