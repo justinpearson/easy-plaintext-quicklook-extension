@@ -2,9 +2,10 @@
 
 A small macOS Quick Look Preview Extension that fills in Finder-spacebar text previews for `.yaml`, `.yml`, `.toml`, and any other plain-text-based file extension you'd like to add. Targets macOS Tahoe (26.x) and later.
 
-| Before | After |
-|---|---|
-| ![Before — generic icon](images/yaml-quicklooks-wrong.png) | ![After — text contents](images/yaml-quicklooks-right.png) |
+| | Before | After |
+|---|---|---|
+| `.yaml` | ![Generic-document icon for a .yaml file](images/yaml-quicklooks-wrong.png) | ![Text contents of a .yaml file rendered by Quick Look](images/yaml-quicklooks-right.png) |
+| `.toml` | ![Generic-document icon for a .toml file](images/toml-quicklooks-wrong.png) | ![Text contents of a .toml file rendered by Quick Look](images/toml-quicklooks-right.png) |
 
 ## Why this exists
 
@@ -45,6 +46,8 @@ If you'd rather run the steps yourself:
 ## Verifying the extension is enabled
 
 To see the user-facing on/off toggle: **System Settings → General → Login Items & Extensions**. Scroll the right-hand pane to the section listing apps that provide extensions, click the **(i)** info button next to **EasyPlaintextQuicklookExtension**, and the popover shows **Quick Look** with an enable toggle. This is the GUI equivalent of `pluginkit -e use/ignore -i <bundle-id>`.
+
+![System Settings → Login Items & Extensions, EasyPlaintextQuicklookExtension popover with Quick Look toggle](images/system-settings-quicklook-toggle.png)
 
 The terminal equivalent for confirming registration:
 
