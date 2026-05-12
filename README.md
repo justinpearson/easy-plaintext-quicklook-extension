@@ -1,4 +1,96 @@
-# easy-plaintext-quicklook-extension
+# Easy Plaintext Quicklook Extension
+
+This "app" (ugh, it has to be a whole app?) adds a MacOS Finder "QuickLook" extension so you can use spacebar to view certain plaintext file types like `yml`, `toml`, and whatever else you want:
+
+OLD:
+
+![Generic-document icon for a .yaml file](images/yaml-quicklooks-wrong.png)
+
+NEW:
+
+![Text contents of a .yaml file rendered by Quick Look](images/yaml-quicklooks-right.png)
+
+
+# WIP:
+
+## One-time Setup
+
+1. Clone this project:
+
+2. Ensure xcode is installed:
+
+2. Build the App:
+
+3. Copy the App to `/Applications`
+
+(this is needed because the QuickLook system only allows Extensions to live in certain dirs.) (TODO: is this right?)
+
+
+
+
+## Adding a new file type to be "plaintext quick-look-able"
+
+Unfortunately, this seemingly simple feature requires a baffling amount of Apple infrastructure: You basically have to create an entire app that does nothing, except it contains a super simple QuickLook Extension `.appex` file that simply reads the file-to-preview, and running this app once registers the .appex file with MacOS's QuickLook system. Oh yeah, and you can't 
+
+gets registered with MacOS when you and run it once, simply to register your new plaintext filetype with some MacOS service. You can't just run my version because the code-signing won't match.
+
+So, here we go:
+
+1. Clone + build:
+
+```
+git clone XXX
+cd XXX
+```
+
+2. Add your favorite text-based filetypes you want to make QuickLookable to `PreviewExtension/Info.plist` :
+
+```
+<key>QLSupportedContentTypes</key>
+<array>
+    <string>public.yaml</string>
+    <string>public.toml</string>
+    YOUR NEW FILE EXTENSION HERE
+</array>
+
+```
+
+3. Build the app:
+
+```
+xcodebuild -project EasyPlaintextQuicklookExtension.xcodeproj -scheme EasyPlaintextQuicklookExtension -configuration Debug build
+```
+
+(TODO: say smt here about code signing, need to cover 2 cases: user has a $100/yr Apple Developer acct, or not)
+
+4. Copy app to `/Applications/` dir, run it once to register the Quick Look extension
+
+(TODO: would be good to have a "before" and "after" verification that we can do from the command line, to prove that this funny ceremony actual did something.)
+
+5. 
+
+1. Open `EasyPlaintextQuicklookExtension.xcodeproj` in Xcode.
+2. Set the signing team for both targets (`EasyPlaintextQuicklookExtension` and `PreviewExtension`) to your Apple Developer team — see [Building from a fork](#building-from-a-fork) below.
+3. **Product → Build** (or `xcodebuild -project EasyPlaintextQuicklookExtension.xcodeproj -scheme EasyPlaintextQuicklookExtension -configuration Debug build` from the terminal).
+4. Locate the built `.app`: **Product → Show Build Folder in Finder**, then `Products/Debug/EasyPlaintextQuicklookExtension.app`.
+5. Drag the `.app` into `/Applications/`.
+6. Double-click it once. A "Hello, world!" window may appear; close it. The single launch is what causes macOS to discover and register the embedded Quick Look extension.
+7. From the terminal: `killall QuickLookUIService`. This drops the running daemon's cached plugin list so it picks up the new extension.
+8. Test: spacebar `examples/yamllint.yml` in Finder.
+
+
+## Uninstall
+
+TODO
+
+## Background
+
+TODO
+
+previews, use spacebar to "preview" files? it always bugged me that it doesn't work for text-based files like yml and toml. So I had Claude fix it. Lots of annoying Apple-specific hoops to jump through: Xcode, $100/yr Apple Developer subscription, Swift, ... . I had to make a whole fake app and put it in /Applications/, simply to house a 2-line Quick Look Extension, that doesn't even do anything besides  that registers upon the one-time app-launch that a .yml file should be
+
+
+# OLD
 
 A small macOS Quick Look Preview Extension that fills in Finder-spacebar text previews for `.yaml`, `.yml`, `.toml`, and any other plain-text-based file extension you'd like to add. Targets macOS Tahoe (26.x) and later.
 
